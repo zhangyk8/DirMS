@@ -41,7 +41,7 @@ The first term of the above product can be viewed as a proportional form of the 
 
 We also encapsulate the entire directional mean shift algorithm into a single fixed-point iteration
 
-<img src="https://latex.codecogs.com/svg.latex?\Large&space;\widehat{\mathbf{y}}_{s+1}=-\frac{\sum_{i=1}^n\mathbf{X}_i\,L'\left(\frac{1-\widehat{\mathbf{y}}_s^T\,\mathbf{X}_i}{h^2}\right)}{\left|\left|\sum_{i=1}^n\mathbf{X}_i\,L'\left(\frac{1-\widehat{\mathbf{y}}_s^T\,\mathbf{X}_i}{h^2}\right)\right|\right|_2}=\frac{\nabla\widehat{f}_h(\widehat{\mathbf{y}}_s)}{\left|\left|\widehat{f}_h(\widehat{\mathbf{y}}_s)\right|\right|_2}," />
+<img src="https://latex.codecogs.com/svg.latex?\Large&space;\widehat{\mathbf{y}}_{s+1}=-\frac{\sum_{i=1}^n\mathbf{X}_i\,L'\left(\frac{1-\widehat{\mathbf{y}}_s^T\,\mathbf{X}_i}{h^2}\right)}{\left|\left|\sum_{i=1}^n\mathbf{X}_i\,L'\left(\frac{1-\widehat{\mathbf{y}}_s^T\,\mathbf{X}_i}{h^2}\right)\right|\right|_2}=\frac{\nabla\widehat{f}_h(\widehat{\mathbf{y}}_s)}{\left|\left|\nabla\widehat{f}_h(\widehat{\mathbf{y}}_s)\right|\right|_2}," />
 
 where <img src="https://latex.codecogs.com/svg.latex?\Large&space;\left\{\widehat{\mathbf{y}}_s\right\}_{s=0,1,...}\subset\Omega_q" /> denotes the path of successive points defined by our directional mean shift iteration. This surprisingly incorporates the total gradient <img src="https://latex.codecogs.com/svg.latex?\Large&space;\nabla\widehat{f}_h" /> into our proposed algorithm. See Fig 1 below for a graphical illustration.
 
