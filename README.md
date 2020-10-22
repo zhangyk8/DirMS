@@ -46,6 +46,6 @@ We also encapsulate the entire directional mean shift algorithm into a single fi
 where <img src="https://latex.codecogs.com/svg.latex?\Large&space;\left\{\widehat{\mathbf{y}}_s\right\}_{s=0,1,...}\subset\Omega_q" /> denotes the path of successive points defined by our directional mean shift iteration. This surprisingly incorporates the total gradient <img src="https://latex.codecogs.com/svg.latex?\Large&space;\nabla\widehat{f}_h" /> into our proposed algorithm. See Fig 1 below for a graphical illustration.
 
 <p align="center">
-<img src="https://github.com/zhangyk8/DirMS/blob/master/Figures/MS_TripMode_Step0_cyl.pdf" style="zoom:60%" />
- <B>Fig 1. </B>A flowchart for the mode clustering analysis (cited from Chen et al., 2016) 
+<img src="https://github.com/zhangyk8/DirMS/blob/master/Figures/MS_One_Step1.png" style="zoom:60%" />
+ <B>Fig 1. </B>Illustration of one-step iteration of our directional mean shift algorithm 
  </p>
