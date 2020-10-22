@@ -49,3 +49,5 @@ where <img src="https://latex.codecogs.com/svg.latex?\Large&space;\left\{\wideha
 <img src="https://github.com/zhangyk8/DirMS/blob/master/Figures/MS_One_Step1.png" style="zoom:50%" />
  <B>Fig 1. </B>Illustration of one-step iteration of our directional mean shift algorithm 
  </p>
+ 
+ 
