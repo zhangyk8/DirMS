@@ -20,3 +20,7 @@ Some high-level descriptions of each python script are as follows:
 - **Spherical_Sim.py**: This script generates all the plots of our simulation studies in the spherical cases (Figure 1, 6, and 9 in the paper).
 - **Utility.py**: This script contains all the utility functions for our experiments.
 - **vMF_Density_Fig.py**: This script generates the contour plots of a 2-von Mises-Fisher density and a mixture of 2-vMF densities (Figure 2 in the paper).
+
+#### Directional Kernel Density Estimation (KDE)
+
+Given a random directional sample <img src="https://latex.codecogs.com/svg.latex?\Large&space;\left\{\mathbf{X}_1,...,\mathbf{X}_n\right\}" />
