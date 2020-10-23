@@ -50,7 +50,7 @@ where <img src="https://latex.codecogs.com/svg.latex?\Large&space;\left\{\wideha
  <B>Fig 1. </B>Illustration of one-step iteration of our directional mean shift algorithm 
  </p>
  
-The implementation of the directional kernel density estimation is encapsulated into a Python function called `DirKDE` in the script **DirMS_fun.py**, while the directional mean shift algorithm is implemented using a Python function `MS_DirKDE` in the same script. The input arguments of the function `MS_DirMS` essentially subsumes the ones of the function ``DirKDE``; thus, we combine the descriptions of their arguments as follows:
+The implementation of the directional kernel density estimation is encapsulated into the Python function called `DirKDE` in the script **DirMS_fun.py**, while the directional mean shift algorithm is implemented in the Python function `MS_DirKDE` in the same script. The input arguments of the function `MS_DirMS` essentially subsumes the ones of the function ``DirKDE``; thus, we combine the descriptions of their arguments as follows:
 `def DirKDE(x, data, h=None)`
  
 `def MS_DirKDE(y_0, data, h=None, eps=1e-7, max_iter=1000, diff_method='all')`
@@ -166,5 +166,32 @@ plt.show()
  ```
 <p align="center">
 <img src="https://github.com/zhangyk8/DirMS/blob/main/Figures/Output.png" style="zoom:60%" />
- <B>Fig 2. </B>An example output directional KDE and mean shift algorithm 
+ <B>Fig 2. </B>An example output of directional KDE and mean shift algorithm 
  </p>
+ 
+ ### Blurring Directional Mean Shift Algorithm
+ 
+ As the dimension of data or sample size increase, it is notable that the directional mean shift algorithm is slow. One possible method to accelerate the algorithm is to use a blurring procedure, where the dataset for density estimation is successively updated after each mean shift iteration. We implement this acceleration method with our directional mean shift algorithm in the Python function `MS_Blurring_DirKDE` following the stopping criterion in Carreira-Perpiñán (2006). However, the stopping criterion is designed for the (Gaussian) mean shift algorithm in the Euclidean data setting and may not be optimal to our directional mean shift algorithm. The refinement of the stopping criterion is left as a future direction.
+ 
+ `def MS_Blurring_DirKDE(y_0, data, h=None, tol_1=1e-5, tol_2=1e-7, bins=None, max_iter=1000)`
+ - Parameters: 
+    - y_0: (m,d)-array or (N,d)-array
+           ---- The Euclidean coordinates of m or N directional initial points in d-dimensional Euclidean space.
+    - data: (n,d)-array
+           ---- The Euclidean coordinates of n directional random sample points in d-dimensional Euclidean space.
+    - h: float
+           ---- The bandwidth parameter. (Default: h=None. Then a rule of thumb for directional KDEs with the von Mises kernel in Garcia-Portugues (2013) is applied.)
+    - tol_1: float
+           ---- The precision parameter for the mean location difference between two consecutive iteration sets of points. (Default: tol_1=1e-5)
+    - tol_2: float
+           ---- The stopping criterion for the entropy differences between two consecutive iteration sets of points. (Default: tol_2=1e-7)
+    - bins: int
+           ---- The number of bins for computing the entropy. (Default: bins=None. Then 'bins=int(np.floor(0.9*n))', where n is the number of random sample points.)
+    - max_iter: int
+           ---- The maximum number of iterations for the mean shift iteration. (Default: max_iter=1000)
+    
+- Return:
+    - MS_path: (N,d,T)-array
+           ---- The whole iterative trajectory of every initial point yielded by the blurring directional mean shift algorithm.
+ 
+ 
