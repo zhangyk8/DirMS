@@ -166,7 +166,7 @@ plt.show()
  ```
 <p align="center">
 <img src="https://github.com/zhangyk8/DirMS/blob/main/Figures/Output.png" style="zoom:60%" />
- <B>Fig 2. </B>An example output of directional KDE and mean shift algorithm 
+ <B>Fig 2. </B>An example output of directional KDE and directional mean shift algorithm 
  </p>
  
  ### Blurring Directional Mean Shift Algorithm
@@ -287,4 +287,11 @@ plt.title('Contours of directional KDE and affiliations of initial points')
 plt.show()
  ```
  
+ <p align="center">
+<img src="https://github.com/zhangyk8/DirMS/blob/main/Figures/BMS_output.png" style="zoom:60%" />
+ <B>Fig 2. </B>An example output of directional KDE and blurring directional mean shift algorithm 
+ </p>
+ 
+ ### Additional Reference
+- M. Á. Carreira-Perpiñán. Fast nonparametric clustering with gaussian blurring mean-shift. _Proceedings of the 23rd International Conference on Machine Learning_, 2006:153–160, 01.
  
