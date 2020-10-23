@@ -46,8 +46,27 @@ We also encapsulate the entire directional mean shift algorithm into a single fi
 where <img src="https://latex.codecogs.com/svg.latex?\Large&space;\left\{\widehat{\mathbf{y}}_s\right\}_{s=0,1,...}\subset\Omega_q" /> denotes the path of successive points defined by our directional mean shift iteration. This surprisingly incorporates the total gradient <img src="https://latex.codecogs.com/svg.latex?\Large&space;\nabla\widehat{f}_h" /> into our proposed algorithm. See Fig 1 below for a graphical illustration.
 
 <p align="center">
-<img src="https://github.com/zhangyk8/DirMS/blob/master/Figures/MS_One_Step1.png" style="zoom:50%" />
+<img src="https://github.com/zhangyk8/DirMS/blob/main/Figures/MS_One_Step1.png" style="zoom:20%" />
  <B>Fig 1. </B>Illustration of one-step iteration of our directional mean shift algorithm 
  </p>
  
+ The implementation of the directional mean shift algorithm is encapsulated into a Python function called `MS_DirKDE` in the script **DirMS_fun.py**.
+ `def MS_DirKDE(y_0, data, h=None, eps=1e-7, max_iter=1000, diff_method='all')`
+ - Parameters: 
+     - y_0: (N,d)-array
+            ---- The Euclidean coordinates of N directional initial points in d-dimensional Euclidean space.
+     - data: (n,d)-array
+            ---- The Euclidean coordinates of n directional random sample points in d-dimensional Euclidean space.
+     - h: float
+            ---- The bandwidth parameter. (Default: h=None. Then a rule of thumb for directional KDEs with the von Mises kernel in Garcia-Portugues (2013) is applied.)
+     - eps: float
+            ---- The precision parameter for stopping the mean shift iteration. (Default: eps=1e-7)
+     - max_iter: int
+            ---- The maximum number of iterations for the mean shift iteration. (Default: max_iter=1000)
+     - diff_method: str ('all'/'mean')
+            ---- The method of computing the differences between two consecutive sets of iteration points when they are compared with the precision parameter to stop the algorithm. (When diff_method='all', all the differences between two consecutive sets of iteration points need to be smaller than 'eps' for terminating the algorithm. When diff_method='mean', only the mean difference is compared with 'eps' and stop the algorithm. Default: diff_method='all'.)
+    
+ - Return:
+     - MS_path: (N,d,T)-array
+            ---- The whole iterative trajectory of every initial point yielded by the mean shift algorithm.
  
