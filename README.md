@@ -289,7 +289,7 @@ plt.show()
  
  <p align="center">
 <img src="https://github.com/zhangyk8/DirMS/blob/main/Figures/BMS_output.png" style="zoom:60%" />
- <B>Fig 2. </B>An example output of directional KDE and blurring directional mean shift algorithm 
+ <B>Fig 3. </B>An example output of directional KDE and blurring directional mean shift algorithm 
  </p>
  
  ### Additional Reference
