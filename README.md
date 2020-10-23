@@ -50,23 +50,117 @@ where <img src="https://latex.codecogs.com/svg.latex?\Large&space;\left\{\wideha
  <B>Fig 1. </B>Illustration of one-step iteration of our directional mean shift algorithm 
  </p>
  
- The implementation of the directional mean shift algorithm is encapsulated into a Python function called `MS_DirKDE` in the script **DirMS_fun.py**.
- `def MS_DirKDE(y_0, data, h=None, eps=1e-7, max_iter=1000, diff_method='all')`
- - Parameters: 
-     - y_0: (N,d)-array
-            ---- The Euclidean coordinates of N directional initial points in d-dimensional Euclidean space.
-     - data: (n,d)-array
-            ---- The Euclidean coordinates of n directional random sample points in d-dimensional Euclidean space.
-     - h: float
-            ---- The bandwidth parameter. (Default: h=None. Then a rule of thumb for directional KDEs with the von Mises kernel in Garcia-Portugues (2013) is applied.)
-     - eps: float
-            ---- The precision parameter for stopping the mean shift iteration. (Default: eps=1e-7)
-     - max_iter: int
-            ---- The maximum number of iterations for the mean shift iteration. (Default: max_iter=1000)
-     - diff_method: str ('all'/'mean')
-            ---- The method of computing the differences between two consecutive sets of iteration points when they are compared with the precision parameter to stop the algorithm. (When diff_method='all', all the differences between two consecutive sets of iteration points need to be smaller than 'eps' for terminating the algorithm. When diff_method='mean', only the mean difference is compared with 'eps' and stop the algorithm. Default: diff_method='all'.)
-    
- - Return:
-     - MS_path: (N,d,T)-array
-            ---- The whole iterative trajectory of every initial point yielded by the mean shift algorithm.
+The implementation of the directional kernel density estimation is encapsulated into a Python function called `DirKDE` in the script **DirMS_fun.py**, while the directional mean shift algorithm is implemented using a Python function `MS_DirKDE` in the same script. The input arguments of the function `MS_DirMS` essentially subsumes the ones of the function ``DirKDE``; thus, we combine the descriptions of their arguments as follows:
+`def DirKDE(x, data, h=None)`
  
+`def MS_DirKDE(y_0, data, h=None, eps=1e-7, max_iter=1000, diff_method='all')`
+- Parameters: 
+    - x or y_0: (m,d)-array or (N,d)-array
+           ---- The Euclidean coordinates of m or N directional initial points in d-dimensional Euclidean space.
+    - data: (n,d)-array
+           ---- The Euclidean coordinates of n directional random sample points in d-dimensional Euclidean space.
+    - h: float
+           ---- The bandwidth parameter. (Default: h=None. Then a rule of thumb for directional KDEs with the von Mises kernel in Garcia-Portugues (2013) is applied.)
+    - eps: float
+           ---- The precision parameter for stopping the mean shift iteration. (Default: eps=1e-7)
+    - max_iter: int
+           ---- The maximum number of iterations for the mean shift iteration. (Default: max_iter=1000)
+    - diff_method: str ('all'/'mean')
+           ---- The method of computing the differences between two consecutive sets of iteration points when they are compared with the precision parameter to stop the algorithm. (When diff_method='all', all the differences between two consecutive sets of iteration points need to be smaller than 'eps' for terminating the algorithm. When diff_method='mean', only the mean difference is compared with 'eps' and stop the algorithm. Default: diff_method='all'.)
+    
+- Return:
+    - MS_path: (N,d,T)-array
+           ---- The whole iterative trajectory of every initial point yielded by the mean shift algorithm.
+Usage:
+ 
+```bash
+import numpy as np
+import matplotlib.pyplot as plt
+from mpl_toolkits.basemap import Basemap
+from matplotlib import cm
+from Utility_fun import sph2cart, cart2sph, vMF_samp, Unique_Modes
+from DirMS_fun import DirKDE, MS_DirKDE
+ 
+## Set up the query points for computing the estimated densities
+nrows, ncols = (100, 180)
+lon, lat = np.meshgrid(np.linspace(-180, 180, ncols), np.linspace(-90, 90, nrows))
+xg, yg, zg = sph2cart(lon, lat)
+query_points = np.concatenate((xg.reshape(nrows*ncols, 1), 
+                               yg.reshape(nrows*ncols, 1),
+                               zg.reshape(nrows*ncols, 1)), axis=1)
+   
+np.random.seed(123)   ## Set a seed only for reproducibility
+## Generate a vMF random sample with one mode
+vMF_data1 = vMF_samp(1000, mu=np.array([1,0,0]), kappa=5)
+lon1, lat1, R = cart2sph(*vMF_data1.T)
+d_hat1 = DirKDE(query_points, vMF_data1).reshape(nrows, ncols)
+## Perform the directional mean shift algorithm on the generated random sample
+MS_path1 = MS_DirKDE(vMF_data1, vMF_data1, h=None, eps=1e-7, max_iter=1000)
+# Compute the mode affiliations
+num_ms_m1 = MS_path1.shape[2]-1
+uni_ms_m1, uni_ms_m_lab1 = Unique_Modes(can_modes=MS_path1[:,:,num_ms_m1], tol=1e-2)
+
+## Plotting the directional mean shift trajectory on the sphere
+plt.figure(figsize=(14,12))
+plt.subplot(221)
+curr_step = 0
+lon4, lat4, R = cart2sph(*MS_path1[:,:,curr_step].T)
+m2 = Basemap(projection='ortho', lat_0=30, lon_0=0)
+# draw lat/lon grid lines every 30 degrees.
+m2.drawmeridians(np.arange(-180, 180, 30))
+m2.drawparallels(np.arange(-90, 90, 30))
+# compute native map projection coordinates of lat/lon grid.
+x, y = m2(lon, lat)
+x4, y4 = m2(lon4, lat4)
+# contour data over the map.
+cs = m2.contourf(x, y, d_hat1)
+cs = m2.scatter(x4, y4, color='red', s=10)
+plt.title('Contours of directional KDE and mean shift: Step '+str(curr_step))
+
+plt.subplot(222)
+curr_step = (MS_path1.shape[2]-1)//3
+lon4, lat4, R = cart2sph(*MS_path1[:,:,curr_step].T)
+m2 = Basemap(projection='ortho', lat_0=30, lon_0=0)
+# draw lat/lon grid lines every 30 degrees.
+m2.drawmeridians(np.arange(-180, 180, 30))
+m2.drawparallels(np.arange(-90, 90, 30))
+# compute native map projection coordinates of lat/lon grid.
+x, y = m2(lon, lat)
+x4, y4 = m2(lon4, lat4)
+# contour data over the map.
+cs = m2.contourf(x, y, d_hat1)
+cs = m2.scatter(x4, y4, color='red', s=10)
+plt.title('Contours of directional KDE and mean shift: Step '+str(curr_step))
+
+plt.subplot(223)
+curr_step = MS_path1.shape[2]-1
+lon4, lat4, R = cart2sph(*MS_path1[:,:,curr_step].T)
+m2 = Basemap(projection='ortho', lat_0=30, lon_0=0)
+# draw lat/lon grid lines every 30 degrees.
+m2.drawmeridians(np.arange(-180, 180, 30))
+m2.drawparallels(np.arange(-90, 90, 30))
+# compute native map projection coordinates of lat/lon grid.
+x, y = m2(lon, lat)
+x4, y4 = m2(lon4, lat4)
+# contour data over the map.
+cs = m2.contourf(x, y, d_hat1)
+cs = m2.scatter(x4, y4, color='red', s=10)
+plt.title('Contours of directional KDE and mean shift: Step '+str(curr_step))
+
+plt.subplot(224)
+curr_step = 0
+lon3, lat3, R = cart2sph(*MS_path1[:,:,curr_step].T)
+m2 = Basemap(projection='ortho', lat_0=30, lon_0=0)
+# draw lat/lon grid lines every 30 degrees.
+m2.drawmeridians(np.arange(-180, 180, 30))
+m2.drawparallels(np.arange(-90, 90, 30))
+# compute native map projection coordinates of lat/lon grid.
+x, y = m2(lon, lat)
+x3, y3 = m2(lon3, lat3)
+# contour data over the map.
+cs = m2.contourf(x, y, d_hat1)
+cs = m2.scatter(x3, y3, c=uni_ms_m_lab1, s=10, cmap=cm.cool)
+## cmap=cm.cool
+plt.title('Contours of directional KDE and affiliations of initial points')
+plt.show()
+ ```
