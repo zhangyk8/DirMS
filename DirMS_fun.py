@@ -179,7 +179,7 @@ def MS_Blurring_DirKDE(y_0, data, h=None, tol_1=1e-5, tol_2=1e-7, bins=None,
     Return:
         MS_path: (N,d,T)-array
             The whole iterative trajectory of every initial point yielded by 
-            the mean shift algorithm.
+            the blurring directional mean shift algorithm.
     '''
     n = data.shape[0]  ## Number of data points
     d = data.shape[1]  ## Euclidean dimension of the data
