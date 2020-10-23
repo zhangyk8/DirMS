@@ -194,4 +194,97 @@ plt.show()
     - MS_path: (N,d,T)-array
            ---- The whole iterative trajectory of every initial point yielded by the blurring directional mean shift algorithm.
  
+ Usage:
+ ```bash
+ import numpy as np
+import matplotlib.pyplot as plt
+from mpl_toolkits.basemap import Basemap
+from matplotlib import cm
+from Utility_fun import sph2cart, cart2sph, vMF_samp, Unique_Modes
+from DirMS_fun import DirKDE, MS_Blurring_DirKDE
+
+nrows, ncols = (100, 180)
+lon, lat = np.meshgrid(np.linspace(-180, 180, ncols), np.linspace(-90, 90, nrows))
+xg, yg, zg = sph2cart(lon, lat)
+
+query_points = np.concatenate((xg.reshape(nrows*ncols, 1), 
+                              yg.reshape(nrows*ncols, 1),
+                              zg.reshape(nrows*ncols, 1)), axis=1)
+
+np.random.seed(123)  ## Set an arbitrary seed for reproducibility
+vMF_data1 = vMF_samp(1000, mu=np.array([1,0,0]), kappa=5)
+lon1, lat1, R = cart2sph(*vMF_data1.T)
+d_hat1 = DirKDE(query_points, vMF_data1).reshape(nrows, ncols)
+
+BMS_path1 = MS_Blurring_DirKDE(vMF_data1, vMF_data1, h=None, tol_1=1e-7, tol_2=1e-8, 
+                               bins=800, max_iter=1000)
+num_bms_m1 = BMS_path1.shape[2]-1
+uni_bms_m1, uni_bms_m_lab1 = Unique_Modes(can_modes=BMS_path1[:,:,num_bms_m1], tol=1e-2)
+
+## Plotting
+plt.figure(figsize=(14,12))
+plt.subplot(221)
+curr_step = 0
+lon4, lat4, R = cart2sph(*BMS_path1[:,:,curr_step].T)
+m2 = Basemap(projection='ortho', lat_0=30, lon_0=0)
+# draw lat/lon grid lines every 30 degrees.
+m2.drawmeridians(np.arange(-180, 180, 30))
+m2.drawparallels(np.arange(-90, 90, 30))
+# compute native map projection coordinates of lat/lon grid.
+x, y = m2(lon, lat)
+x4, y4 = m2(lon4, lat4)
+# contour data over the map.
+cs = m2.contourf(x, y, d_hat1)
+cs = m2.scatter(x4, y4, color='red', s=10)
+plt.title('Contours of directional KDE and mean shift: Step '+str(curr_step))
+
+plt.subplot(222)
+curr_step = (BMS_path1.shape[2]-1)//3
+lon4, lat4, R = cart2sph(*BMS_path1[:,:,curr_step].T)
+m2 = Basemap(projection='ortho', lat_0=30, lon_0=0)
+# draw lat/lon grid lines every 30 degrees.
+m2.drawmeridians(np.arange(-180, 180, 30))
+m2.drawparallels(np.arange(-90, 90, 30))
+# compute native map projection coordinates of lat/lon grid.
+x, y = m2(lon, lat)
+x4, y4 = m2(lon4, lat4)
+# contour data over the map.
+cs = m2.contourf(x, y, d_hat1)
+cs = m2.scatter(x4, y4, color='red', s=10)
+plt.title('Contours of directional KDE and mean shift: Step '+str(curr_step))
+
+
+plt.subplot(223)
+curr_step = BMS_path1.shape[2]-1
+lon4, lat4, R = cart2sph(*BMS_path1[:,:,curr_step].T)
+m2 = Basemap(projection='ortho', lat_0=30, lon_0=0)
+# draw lat/lon grid lines every 30 degrees.
+m2.drawmeridians(np.arange(-180, 180, 30))
+m2.drawparallels(np.arange(-90, 90, 30))
+# compute native map projection coordinates of lat/lon grid.
+x, y = m2(lon, lat)
+x4, y4 = m2(lon4, lat4)
+# contour data over the map.
+cs = m2.contourf(x, y, d_hat1)
+cs = m2.scatter(x4, y4, color='red', s=10)
+plt.title('Contours of directional KDE and mean shift: Step '+str(curr_step)+' (Converged)')
+
+plt.subplot(224)
+curr_step = 0
+lon3, lat3, R = cart2sph(*BMS_path1[:,:,curr_step].T)
+m2 = Basemap(projection='ortho', lat_0=30, lon_0=0)
+# draw lat/lon grid lines every 30 degrees.
+m2.drawmeridians(np.arange(-180, 180, 30))
+m2.drawparallels(np.arange(-90, 90, 30))
+# compute native map projection coordinates of lat/lon grid.
+x, y = m2(lon, lat)
+x3, y3 = m2(lon3, lat3)
+# contour data over the map.
+cs = m2.contourf(x, y, d_hat1)
+cs = m2.scatter(x3, y3, c=uni_bms_m_lab1, s=10, cmap=cm.cool)
+## cmap=cm.cool
+plt.title('Contours of directional KDE and affiliations of initial points')
+plt.show()
+ ```
+ 
  
