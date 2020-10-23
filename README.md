@@ -164,3 +164,7 @@ cs = m2.scatter(x3, y3, c=uni_ms_m_lab1, s=10, cmap=cm.cool)
 plt.title('Contours of directional KDE and affiliations of initial points')
 plt.show()
  ```
+<p align="center">
+<img src="https://github.com/zhangyk8/DirMS/blob/main/Figures/Output.png" style="zoom:60%" />
+ <B>Fig 2. </B>An example output directional KDE and mean shift algorithm 
+ </p>
