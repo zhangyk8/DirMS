@@ -1,7 +1,7 @@
 # Directional Mean Shift Algorithm
 Implementing the directional mean shift algorithm using Python3
 
-- Paper Reference: 
+- Paper Reference: Kernel Smoothing, Mean Shift, and Their Learning Theory with Directional Data (https://arxiv.org/abs/2010.13523)
 - We provide a Python3 implementation of our mean shift algorithm with directional data.
 
 ## Requirements
