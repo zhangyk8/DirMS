@@ -165,8 +165,8 @@ plt.title('Contours of directional KDE and affiliations of initial points')
 plt.show()
  ```
 <p align="center">
-<img src="https://github.com/zhangyk8/DirMS/blob/main/Figures/Output.png" style="zoom:60%" />
- <B>Fig 2. </B>An example output of directional KDE and directional mean shift algorithm 
+<img src="https://github.com/zhangyk8/DirMS/blob/main/Figures/Output.png" style="zoom:70%" />
+ <br><B>Fig 2. </B>An example output of directional KDE and directional mean shift algorithm 
  </p>
  
  ### Blurring Directional Mean Shift Algorithm
