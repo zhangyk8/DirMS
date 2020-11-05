@@ -3,7 +3,7 @@
 """
 @author: Yikun Zhang
 
-Last Editing: October 14, 2020
+Last Editing: November 4, 2020
 
 Description: This script implements the main functions for the directional KDE,
 directional mean shift algorithm, and blurring directional mean shift algorithm.
@@ -55,7 +55,11 @@ def DirKDE(x, data, h=None):
                                   (d+1) * kap_hat * sp.iv(d/2+1, 2*kap_hat)))) ** (1/(d + 3))
         print("The current bandwidth is " + str(h) + ".\n")
     
-    f_hat = np.mean(np.exp(np.dot(x, data.T)/(h**2))/((2*np.pi)**(d/2)*\
+    if d == 3:
+        f_hat = np.mean(np.exp((np.dot(x, data.T)-1)/(h**2))/(2*np.pi\
+                        *(1-np.exp(-2/h**2))*h**2), axis=1)
+    else:
+        f_hat = np.mean(np.exp(np.dot(x, data.T)/(h**2))/((2*np.pi)**(d/2)*\
                            sp.iv(d/2-1, 1/(h**2))*h**(d-2)), axis=1)
     return f_hat
 
@@ -122,8 +126,8 @@ def MS_DirKDE(y_0, data, h=None, eps=1e-7, max_iter=1000, diff_method='all'):
     MS_path = np.zeros((y_0.shape[0], d, max_iter))
     MS_path[:,:,0] = y_0
     for t in range(1, max_iter):
-        # y_can = np.dot(np.exp(-(1-np.dot(MS_path[:,:,t-1], data.T))/(h**2)), data)
-        y_can = np.dot(np.exp(np.dot(MS_path[:,:,t-1], data.T/(h**2))), data)
+        # y_can = np.dot(np.exp(np.dot(MS_path[:,:,t-1], data.T/(h**2))), data)
+        y_can = np.dot(np.exp((np.dot(MS_path[:,:,t-1], data.T)-1)/(h**2)), data)
         y_dist = np.sqrt(np.sum(y_can ** 2, axis=1))
         MS_path[:,:,t] = y_can / y_dist.reshape(len(y_dist), 1)
         if diff_method == 'mean' and \
@@ -134,7 +138,7 @@ def MS_DirKDE(y_0, data, h=None, eps=1e-7, max_iter=1000, diff_method='all'):
                 break       
 
     if t < max_iter:
-        print('The directional mean shift algorithm converges in ' + str(t) + 'steps!')
+        print('The directional mean shift algorithm converges in ' + str(t) + ' steps!')
     else:
         print('The directional mean shift algorithm reaches the maximum number '\
               'of iterations,' + str(max_iter) + ' and has not yet converged.')
@@ -207,7 +211,8 @@ def MS_Blurring_DirKDE(y_0, data, h=None, tol_1=1e-5, tol_2=1e-7, bins=None,
     curr_data = np.copy(data)
     curr_entropy = 0
     for t in range(1, max_iter):
-        y_can = np.dot(np.exp(np.dot(MS_path[:,:,t-1], curr_data.T)/(h**2)), curr_data)
+        # y_can = np.dot(np.exp(np.dot(MS_path[:,:,t-1], curr_data.T)/(h**2)), curr_data)
+        y_can = np.dot(np.exp((np.dot(MS_path[:,:,t-1], curr_data.T)-1)/(h**2)), curr_data)
         y_dist = np.sqrt(np.sum(y_can**2, axis=1))
         MS_path[:,:,t] = y_can/y_dist.reshape(len(y_dist), 1)
         iter_error = 1- np.diagonal(np.dot(MS_path[:,:,t], MS_path[:,:,t-1].T))
@@ -223,8 +228,9 @@ def MS_Blurring_DirKDE(y_0, data, h=None, tol_1=1e-5, tol_2=1e-7, bins=None,
             curr_data = MS_path[:,:,t]
             
     if t<max_iter:
-        print('The blurring Mean Shift algorithm converges in ' + str(t) + 'steps!')
+        print('The blurring directional mean shift algorithm converges in ' \
+              + str(t) + ' steps!')
     else:
-        print('The blurring Mean Shift algorithm reaches the maximum number of '\
-              'iterations,'+str(max_iter)+' and has not yet converged.')
+        print('The blurring directional mean shift algorithm reaches the maximum '\
+              'number of iterations,'+str(max_iter)+' and has not yet converged.')
     return MS_path[:,:,:(t+1)]
