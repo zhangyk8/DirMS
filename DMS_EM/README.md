@@ -1,6 +1,6 @@
 ## The EM Perspective of Directional Mean Shift Algorithm
 
-This repository contains code to generate the figures in the paper [The EM Perspective of Directional Mean Shift Algorithm](https://arxiv.org/abs/2101.10058), (2020).
+This repository contains code to generate the figures in the paper [The EM Perspective of Directional Mean Shift Algorithm](https://arxiv.org/abs/2101.10058), (2021).
 
 ### Requirements
 
