@@ -6,7 +6,7 @@
 Last Editing: October 14, 2020
 
 Description: This script generates all the plots of real-world applications on 
-the earthquake data (Figure 8 in the paper).
+the earthquake data (Figure 9 in the paper).
 """
 
 import matplotlib.pyplot as plt
@@ -170,7 +170,7 @@ if __name__ == "__main__":
     print("Save the plot as 'EQ_mode_graph.pdf'.\n")
     
     print('Generating the plot of earthquake affiliations after mode clustering'\
-          'on the world map.\n')
+          ' on the world map.\n')
     
     fig=plt.figure(figsize=(14,8))
     curr_step = 0

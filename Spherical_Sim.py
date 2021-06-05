@@ -3,10 +3,10 @@
 """
 @author: Yikun Zhang
 
-Last Editing: October 13, 2020
+Last Editing: April 23, 2021
 
 Description: This script generates all the plots of our simulation studies in the 
-spherical cases (Figure 1, 6, and 9 in the paper).
+spherical cases (Figures 1, 6, and 10 in the paper).
 """
 
 import matplotlib.pyplot as plt
@@ -15,6 +15,8 @@ from mpl_toolkits.basemap import Basemap
 from matplotlib import cm
 from Utility_fun import sph2cart, cart2sph, vMF_samp, Unique_Modes, vMF_samp_mix
 from DirMS_fun import DirKDE, MS_DirKDE
+import numpy.linalg as LA
+from sklearn.metrics import confusion_matrix
 
 
 if __name__ == "__main__":
@@ -36,9 +38,11 @@ if __name__ == "__main__":
     ## Perform the directional mean shift algorithm on the generated random sample
     MS_path1 = MS_DirKDE(vMF_data1, vMF_data1, h=None, eps=1e-7, max_iter=1000)
     # Compute the mode affiliations
-    num_ms_m1 = MS_path1.shape[2]-1
-    uni_ms_m1, uni_ms_m_lab1 = Unique_Modes(can_modes=MS_path1[:,:,num_ms_m1], 
+    num_iter1 = MS_path1.shape[2]-1
+    uni_ms_m1, uni_ms_m_lab1 = Unique_Modes(can_modes=MS_path1[:,:,num_iter1], 
                                             tol=1e-2)
+    print("The misclassification rate of the one-mode simulation on the sphere is "\
+          +str(np.mean(uni_ms_m_lab1))+".\n")
     
     plt.rcParams.update({'font.size': 20})  ## Change the font sizes of ouput figures
     print("Generating the plots for the spherical KDE with one mode and mean "\
@@ -173,20 +177,32 @@ if __name__ == "__main__":
     np.random.seed(123)  ## Set a seed only for reproducibility
     kappa3 = [8.0, 8.0, 5.0]
     prob3 = [0.3, 0.3, 0.4]
-    vMF_data3 = vMF_samp_mix(1000, mu=mu3, kappa=kappa3, prob=prob3)
+    vMF_data3, true_lab = vMF_samp_mix(1000, mu=mu3, kappa=kappa3, prob=prob3, 
+                                       label=True)
     lon3, lat3, R = cart2sph(*vMF_data3.T)
     d_hat3 = DirKDE(query_points, vMF_data3).reshape(nrows, ncols)
     
     ## Perform directional mean shift algorithm on the generated random sample
-    MS_path3 = MS_DirKDE(vMF_data3, vMF_data3, h=None, eps=1e-5, max_iter=1000)
+    MS_path3 = MS_DirKDE(vMF_data3, vMF_data3, h=None, eps=1e-7, max_iter=1000)
     # Compute the mode affiliations
-    num_ms_m3 = MS_path3.shape[2]-1
-    uni_ms_m3, uni_ms_m_lab3 = Unique_Modes(can_modes=MS_path3[:,:,num_ms_m3], 
+    num_iter3 = MS_path3.shape[2]-1
+    uni_ms_m3, uni_ms_m_lab3 = Unique_Modes(can_modes=MS_path3[:,:,num_iter3], 
                                             tol=1e-2)
+    # Rearrange the assignment of cluster groups
+    clu_lab = []
+    for i in range(uni_ms_m3.shape[0]):
+        clu_lab.append(np.argmin(LA.norm(uni_ms_m3[i,:] - mu3, axis=1)))
+    uni_lab_adj = np.zeros_like(uni_ms_m_lab3)
+    for i in range(uni_lab_adj.shape[0]):
+        uni_lab_adj[i] = clu_lab[uni_ms_m_lab3[i]]
+    
+    print("The confusion matrix of mode clustering is ")
+    print(confusion_matrix(true_lab, uni_lab_adj))
+    print("\n")
     
     plt.rcParams.update({'font.size': 20})  ## Change the font sizes of ouput figures
     print("Generating the plots for the spherical KDE with three modes and mean "\
-          "shift iteration points at step 0, 5, and 22 in an orthographic view. \n")
+          "shift iteration points at step 0, 5, and 28 in an orthographic view. \n")
 
     fig=plt.figure(figsize=(8,8))
     curr_step = 0
@@ -203,7 +219,7 @@ if __name__ == "__main__":
     fig.savefig('./Figures/MS_TripMode_Step0_ortho.pdf')
     
     fig=plt.figure(figsize=(8,8))
-    curr_step = (MS_path3.shape[2]-1)//4
+    curr_step = (MS_path3.shape[2]-1)//5
     lon4, lat4, R = cart2sph(*MS_path3[:,:,curr_step].T)
     m2 = Basemap(projection='ortho', lat_0=30, lon_0=0)
     # draw lat/lon grid lines every 30 degrees.
@@ -234,7 +250,7 @@ if __name__ == "__main__":
           "and 'MS_TripMode_Step_conv_ortho.pdf'.\n")
     
     print("Generating the plots for the spherical KDE with three modes and mean "\
-          "shift iteration points at step 0, 5, and 22 in a cylindrical equidistant "\
+          "shift iteration points at step 0, 5, and 28 in a cylindrical equidistant "\
           "view. \n")
     
     fig=plt.figure(figsize=(14,8))
@@ -253,7 +269,7 @@ if __name__ == "__main__":
     fig.savefig('./Figures/MS_TripMode_Step0_cyl.pdf')
     
     fig=plt.figure(figsize=(14,8))
-    curr_step = (MS_path3.shape[2]-1)//4
+    curr_step = (MS_path3.shape[2]-1)//5
     lon4, lat4, R = cart2sph(*MS_path3[:,:,curr_step].T)
     m2 = Basemap(projection='cyl', llcrnrlon=-180, urcrnrlon=180,
                  llcrnrlat=-90, urcrnrlat=90, resolution='c')

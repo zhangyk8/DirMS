@@ -3,7 +3,7 @@
 """
 @author: Yikun Zhang
 
-Last Editing: October 13, 2020
+Last Editing: April 21, 2021
 
 Description: This script contains all the utility functions for our experiments.
 """
@@ -66,7 +66,7 @@ def vMF_density(x, mu=np.array([[0,0,1]]), kappa=[1.0], prob=[1.0]):
             von-Mises Fisher densities. (Default: mu=np.array([[0,0,1]]).)
        
         kappa: a list of floats with length m
-            The concentration parameters for the mixture of von-Mises Fisher \
+            The concentration parameters for the mixture of von-Mises Fisher 
             densities. (Default: kappa=[1.0])
        
         prob: a list of floats with length m
@@ -104,12 +104,14 @@ def vMF_samp(n, mu=np.array([0,0,1]), kappa=1):
     
     Return:
         data_ps: (n, d)-array
-            The Euclidean coordinates of the randomly sampled points from the vMF density.
+            The Euclidean coordinates of the randomly sampled points from the 
+            vMF density.
     '''
     d = len(mu)   ## Euclidean dimension of the data
     data_ps = np.zeros((n,d))
     ## Sample points from standard normal and then standardize them
-    sam_can = np.random.multivariate_normal(mean=np.zeros((d,)), cov=np.identity(d), size=n)
+    sam_can = np.random.multivariate_normal(mean=np.zeros((d,)), 
+                                            cov=np.identity(d), size=n)
     dist_sam = np.sqrt(np.sum(sam_can**2, axis=1)).reshape(n,1)
     sam_can = sam_can/dist_sam
 
@@ -122,7 +124,8 @@ def vMF_samp(n, mu=np.array([0,0,1]), kappa=1):
     cnt = sams.shape[0]
     data_ps[:cnt,:] = sams
     while cnt < n:
-        can_p = np.random.multivariate_normal(mean=np.zeros((d,)), cov=np.identity(d), size=1)
+        can_p = np.random.multivariate_normal(mean=np.zeros((d,)), 
+                                              cov=np.identity(d), size=1)
         can_p = can_p/np.sqrt(np.sum(can_p**2))
         unif_p = np.random.uniform(0, 1, 1)
         if np.exp(kappa*(np.dot(can_p, mu)-1)) > unif_p:
@@ -131,9 +134,10 @@ def vMF_samp(n, mu=np.array([0,0,1]), kappa=1):
     return data_ps
 
 
-def vMF_samp_mix(n, mu=np.array([[0,0,1]]), kappa=[1.0], prob=[1.0]):
+def vMF_samp_mix(n, mu=np.array([[0,0,1]]), kappa=[1.0], prob=[1.0], label=False):
     '''
-    Randomly sampling data points from a mixture of q-dimensional von-Mises Fisher densities.
+    Randomly sampling data points from a mixture of q-dimensional von-Mises 
+    Fisher densities.
     
     Parameters:
         n: int
@@ -144,23 +148,32 @@ def vMF_samp_mix(n, mu=np.array([[0,0,1]]), kappa=[1.0], prob=[1.0]):
             von-Mises Fisher densities. (Default: mu=np.array([[0,0,1]]).)
        
         kappa: a list of floats with length m
-            The concentration parameters for the mixture of von-Mises Fisher \
+            The concentration parameters for the mixture of von-Mises Fisher 
             densities. (Default: kappa=[1.0])
        
         prob: a list of floats with length m
             The mixture probabilities. (Default: prob=[1.0])
             
+        label: boolean
+            Indicator of whether the true affiliations of the sampled points 
+            are returned. (Default: label=False)
+            
     Return:
         data_ps: (n, d)-array
-            The Euclidean coordinates of the randomly sampled points from the vMF mixture.
+            The Euclidean coordinates of the randomly sampled points from the 
+            vMF mixture.
     '''
     m = len(prob)   ## The number of mixtures
     d = mu.shape[1]  ## Euclidean dimension of the data
-    assert (len(kappa) == len(prob)), "The parameters 'kappa' and 'prob' should be of the same length."
-    inds = np.random.choice(list(range(m)), n, replace=True, p=np.array(prob)/sum(prob))
+    assert (len(kappa) == len(prob)), "The parameters 'kappa' and 'prob' should \
+    be of the same length."
+    inds = np.random.choice(list(range(m)), n, replace=True, 
+                            p=np.array(prob)/sum(prob))
     data_ps = np.zeros((n,d))
     for i in range(m):
         data_ps[inds == i,:] = vMF_samp(sum(inds == i), mu=mu[i,:], kappa=kappa[i])
+    if label:
+        return data_ps, inds
     return data_ps
 
 
@@ -179,7 +192,8 @@ def Unique_Modes(can_modes, tol=1e-4):
             grouped into the same cluster).
     Return: 
         1) A (m,d) array with the coordinates of m distinct modes. 
-        2) A (N, ) array with integer labels specifying the affiliation of each mesh point.
+        2) A (N, ) array with integer labels specifying the affiliation of each 
+           mesh point.
 '''
     n_modes = can_modes.shape[0]   ## The number of candidate modes
     d = can_modes.shape[1]    ## The dimension of (candidate) modes
@@ -233,10 +247,11 @@ def f1(x, kappa=1.0, prob=[0.5, 0.5]):
 
 def f1_samp(n, kappa=1.0, prob=[0.5, 0.5]):
     m = len(prob)   ## The number of mixtures
-    inds = np.random.choice(list(range(m)), n, replace=True, p=np.array(prob)/sum(prob))
+    inds = np.random.choice(list(range(m)), n, replace=True, 
+                            p=np.array(prob)/sum(prob))
     data_ps = np.zeros((n,2))
     ang_p1 = p2_samp(n=np.sum(inds == 0))
     data_ps[inds == 0, 0] = np.cos(ang_p1)
     data_ps[inds == 0, 1] = np.sin(ang_p1)
     data_ps[inds == 1,:] = vMF_samp(np.sum(inds == 1), mu=np.array([0,1]), kappa=kappa)
-    return data_ps
+    return data_ps, inds

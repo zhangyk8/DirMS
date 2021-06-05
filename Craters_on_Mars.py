@@ -6,7 +6,7 @@
 Last Editing: October 14, 2020
 
 Description: This script generates all the plots of real-world applications on 
-crater data on Mars (Figure 7 and 10 in the paper).
+crater data on Mars (Figures 8 and 11 in the paper).
 """
 
 import matplotlib.pyplot as plt

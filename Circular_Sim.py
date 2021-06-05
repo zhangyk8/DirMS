@@ -3,7 +3,7 @@
 """
 @author: Yikun Zhang
 
-Last Editing: October 13, 2020
+Last Editing: April 23, 2021
 
 Description: This script generates all the plots of our simulation study in the 
 circular case (Figure 5 in the paper).
@@ -13,12 +13,13 @@ import matplotlib.pyplot as plt
 import numpy as np
 from Utility_fun import f1_samp, Unique_Modes
 from DirMS_fun import DirKDE, MS_DirKDE
+from sklearn.metrics import confusion_matrix
 
 
 if __name__ == "__main__":
     np.random.seed(123)   ## Set a seed only for reproducibility
     kap = 6
-    One_d_data = f1_samp(60, kappa=kap)
+    One_d_data, true_lab = f1_samp(60, kappa=kap)
     One_d_data_ang = np.arctan2(One_d_data[:,1], One_d_data[:,0])
     
     ## Set up the query points for computing the estimated densities
@@ -33,6 +34,9 @@ if __name__ == "__main__":
     num_ms_m1 = MS_path1.shape[2]-1
     uni_ms_m1, uni_ms_m_lab1 = Unique_Modes(can_modes=MS_path1[:,:,num_ms_m1], 
                                             tol=1e-2)
+    print("The confusion matrix of mode clustering is ")
+    print(confusion_matrix(true_lab, uni_ms_m_lab1))
+    print("\n")
     
     plt.rcParams.update({'font.size': 20})  ## Change the font sizes of ouput figures
     print("Generating the plots for the circular KDE on the 1-d circular random"\
