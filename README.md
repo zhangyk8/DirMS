@@ -1,7 +1,7 @@
 # Directional Mean Shift Algorithm
 Implementing the directional mean shift algorithm using Python3
 
-- Paper Reference: [Kernel Smoothing, Mean Shift, and Their Learning Theory with Directional Data](https://arxiv.org/abs/2010.13523) (2020)
+- Paper Reference: [Kernel Smoothing, Mean Shift, and Their Learning Theory with Directional Data](https://arxiv.org/abs/2010.13523) (To appear in the Journal of Machine Learning Research, 2021)
 - We provide a Python3 implementation of our mean shift algorithm with directional data.
 
 ## Requirements
@@ -15,10 +15,12 @@ Some high-level descriptions of our Python scripts are as follows:
 
 - **Blurring_DirMS.py**: This script runs the repeated experiments of the directional mean shift algorithm and its blurring version on simulated vMF distributed data sets with one, two, and three modes, repectively (Table 1 in the paper). 
 - **Circular_Sim.py**: This script generates all the plots of our simulation study in the circular case (Figure 5 in the paper).
-- **Craters_on_Mars.py**: This script generates all the plots of real-world applications on crater data on Mars (Figure 7 and 10 in the paper).
+- **Craters_on_Mars.py**: This script generates all the plots of real-world applications on crater data on Mars (Figures 8 and 11 in the paper).
 - **DirMS_fun.py**: This script implements the main functions for the directional KDE, directional mean shift algorithm, and blurring directional mean shift algorithm.
-- **Earthquakes.py**: This script generates all the plots of real-world applications on the earthquake data (Figure 8 in the paper).
-- **Spherical_Sim.py**: This script generates all the plots of our simulation studies in the spherical cases (Figure 1, 6, and 9 in the paper).
+- **DMS_Ray.py**: This script contains the auxiliary code for computing misclassification rates of mode clustering with the directional mean shift algorithm on higher-dimensional spheres. 
+- **Earthquakes.py**: This script generates all the plots of real-world applications on the earthquake data (Figure 9 in the paper).
+- **Mis_Rate_Plotting.py**: This script contains the code for computing misclassification rates of mode clustering with the directional mean shift algorithm on higher-dimensional spheres. (Figure 7 in the paper) (It may take more than an hour to execute, depending on the computing platform and CPU resources.)
+- **Spherical_Sim.py**: This script generates all the plots of our simulation studies in the spherical cases (Figures 1, 6, and 10 in the paper).
 - **Utility.py**: This script contains all the utility functions for our experiments.
 - **vMF_Density_Fig.py**: This script generates the contour plots of a 2-von Mises-Fisher density and a mixture of 2-vMF densities (Figure 2 in the paper).
 
