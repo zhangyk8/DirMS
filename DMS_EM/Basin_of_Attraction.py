@@ -3,10 +3,10 @@
 """
 @author: Yikun Zhang
 
-Last Editing: January 15, 2021
+Last Editing: February 23, 2026
 
 Description: This script generates the plots of basins of attraction for 
-directional mean shift algorithm (Figure 1 in the paper).
+directional mean shift algorithm (Figure 2 in the paper).
 """
 
 import matplotlib.pyplot as plt
